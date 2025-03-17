@@ -1,22 +1,29 @@
 {% extends 'base.html' %}
 
-{% block title %}Nueva Calificación{% endblock %}
+{% block title %}{% if calificacion %}Editar{% else %}Nueva{% endif %} Calificación{% endblock %}
 
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h2>Registrar Nueva Calificación</h2>
+        <h2>{% if calificacion %}Editar{% else %}Registrar Nueva{% endif %} Calificación</h2>
     </div>
     <div class="card-body">
         <form method="POST" class="needs-validation" novalidate>
             <div class="form-group">
                 <label for="estudiante_id">Estudiante:</label>
-                <select class="form-control" id="estudiante_id" name="estudiante_id" required>
+                <select class="form-control" id="estudiante_id" name="estudiante_id" required {% if estudiante_fijo %}disabled{% endif %}>
                     <option value="">Seleccione un estudiante</option>
                     {% for estudiante in estudiantes %}
-                        <option value="{{ estudiante.id }}">{{ estudiante.nombre }} {{ estudiante.apellidos }}</option>
+                        <option value="{{ estudiante.id }}" 
+                        {% if calificacion and calificacion.estudiante_id == estudiante.id %}selected
+                        {% elif estudiante_fijo and estudiante_fijo.id == estudiante.id %}selected{% endif %}>
+                            {{ estudiante.nombre }} {{ estudiante.apellidos }}
+                        </option>
                     {% endfor %}
                 </select>
+                {% if estudiante_fijo %}
+                    <input type="hidden" name="estudiante_id" value="{{ estudiante_fijo.id }}">
+                {% endif %}
                 <div class="invalid-feedback">
                     Por favor seleccione un estudiante.
                 </div>
@@ -24,12 +31,17 @@
 
             <div class="form-group">
                 <label for="asignatura_id">Asignatura:</label>
-                <select class="form-control" id="asignatura_id" name="asignatura_id" required>
+                <select class="form-control" id="asignatura_id" name="asignatura_id" required {% if calificacion %}disabled{% endif %}>
                     <option value="">Seleccione una asignatura</option>
                     {% for asignatura in asignaturas %}
-                        <option value="{{ asignatura.id }}">{{ asignatura.nombre }}</option>
+                        <option value="{{ asignatura.id }}" {% if calificacion and calificacion.asignatura_id == asignatura.id %}selected{% endif %}>
+                            {{ asignatura.nombre }}
+                        </option>
                     {% endfor %}
                 </select>
+                {% if calificacion %}
+                    <input type="hidden" name="asignatura_id" value="{{ calificacion.asignatura_id }}">
+                {% endif %}
                 <div class="invalid-feedback">
                     Por favor seleccione una asignatura.
                 </div>
@@ -38,7 +50,8 @@
             <div class="form-group">
                 <label for="nota">Nota:</label>
                 <input type="number" class="form-control" id="nota" name="nota" 
-                       min="0" max="10" step="0.1" required>
+                       min="0" max="10" step="0.1" required
+                       value="{{ calificacion.nota if calificacion else '' }}">
                 <div class="invalid-feedback">
                     Por favor ingrese una nota válida (entre 0 y 10).
                 </div>
@@ -46,7 +59,11 @@
 
             <div class="form-group">
                 <button type="submit" class="btn btn-success">Guardar</button>
-                <a href="{{ url_for('listar_calificaciones') }}" class="btn btn-secondary">Cancelar</a>
+                {% if estudiante_fijo %}
+                    <a href="{{ url_for('ver_calificaciones_estudiante', id=estudiante_fijo.id) }}" class="btn btn-secondary">Cancelar</a>
+                {% else %}
+                    <a href="{{ url_for('listar_calificaciones') }}" class="btn btn-secondary">Cancelar</a>
+                {% endif %}
             </div>
         </form>
     </div>

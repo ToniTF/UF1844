@@ -116,22 +116,53 @@ def listar_calificaciones():
 @app.route('/calificaciones/editar/<int:id>', methods=['GET', 'POST'])
 def editar_calificacion(id):
     calificacion = Calificacion.query.get_or_404(id)
+    estudiante = Estudiante.query.get(calificacion.estudiante_id)
+    
     if request.method == 'POST':
-        calificacion.estudiante_id = request.form['estudiante_id']
-        calificacion.asignatura_id = request.form['asignatura_id']
+        # Si viene de un formulario donde el estudiante está bloqueado, usamos el valor hidden
+        if 'estudiante_id' in request.form:
+            calificacion.estudiante_id = request.form['estudiante_id']
+        
+        # Si viene de un formulario donde la asignatura está bloqueada, usamos el valor hidden
+        if 'asignatura_id' in request.form:
+            calificacion.asignatura_id = request.form['asignatura_id']
+            
         calificacion.nota = float(request.form['nota'])
         
         try:
             db.session.commit()
             flash('Calificación actualizada correctamente', 'success')
-            return redirect(url_for('listar_calificaciones'))
+            
+            # Si venimos de la vista de calificaciones de un estudiante, volvemos ahí
+            if estudiante:
+                return redirect(url_for('ver_calificaciones_estudiante', id=estudiante.id))
+            else:
+                return redirect(url_for('listar_calificaciones'))
+                
         except Exception as e:
             db.session.rollback()
             flash(f'Error al actualizar calificación: {str(e)}', 'danger')
     
     estudiantes = Estudiante.query.all()
     asignaturas = Asignatura.query.all()
-    return render_template('form_calificacion.html', calificacion=calificacion, estudiantes=estudiantes, asignaturas=asignaturas)
+    
+    # Determinar si venimos de la vista de calificaciones de un estudiante
+    referrer = request.referrer if request.referrer else ""
+    desde_estudiante = "estudiantes/" in referrer and "/calificaciones" in referrer
+    
+    if desde_estudiante:
+        # Si estamos editando desde la vista de un estudiante específico
+        return render_template('form_calificacion.html', 
+                             calificacion=calificacion,
+                             estudiantes=estudiantes,
+                             asignaturas=asignaturas,
+                             estudiante_fijo=estudiante)
+    else:
+        # Edición general
+        return render_template('form_calificacion.html', 
+                             calificacion=calificacion,
+                             estudiantes=estudiantes,
+                             asignaturas=asignaturas)
 
 @app.route('/calificaciones/eliminar/<int:id>')
 def eliminar_calificacion(id):
