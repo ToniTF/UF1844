@@ -1,0 +1,13 @@
+// filepath: c:\python\UF1844\.gitignore
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+venv/
+ENV/
+env/
+.venv/
+*.sqlite
+*.db
+.DS_Store

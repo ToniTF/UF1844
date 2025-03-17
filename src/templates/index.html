@@ -1,0 +1,33 @@
+<!-- filepath: c:\python\UF1844\src\templates\index.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Sistema de Gestión de Notas</h1>
+    <p class="lead">Administra estudiantes y calificaciones de tu academia.</p>
+    <hr class="my-4">
+    <p>Selecciona una opción para comenzar:</p>
+    <div class="row mt-4">
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Estudiantes</h5>
+                    <p class="card-text">Gestiona la información de los estudiantes en la academia.</p>
+                    <a href="{{ url_for('listar_estudiantes') }}" class="btn btn-primary">Ver estudiantes</a>
+                    <a href="{{ url_for('nuevo_estudiante') }}" class="btn btn-success">Nuevo estudiante</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Calificaciones</h5>
+                    <p class="card-text">Registra y consulta las calificaciones de los estudiantes.</p>
+                    <a href="{{ url_for('listar_calificaciones') }}" class="btn btn-primary">Ver calificaciones</a>
+                    <a href="{{ url_for('nueva_calificacion') }}" class="btn btn-success">Nueva calificación</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

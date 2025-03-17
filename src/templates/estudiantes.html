@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Estudiantes{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>Listado de Estudiantes</h2>
+        <a href="{{ url_for('nuevo_estudiante') }}" class="btn btn-success">Nuevo Estudiante</a>
+    </div>
+    <div class="card-body">
+        {% if estudiantes %}
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>Email</th>
+                        <th>Fecha de registro</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for estudiante in estudiantes %}
+                    <tr>
+                        <td>{{ estudiante.nombre }}</td>
+                        <td>{{ estudiante.apellidos }}</td>
+                        <td>{{ estudiante.email }}</td>
+                        <td>{{ estudiante.fecha_registro.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            <a href="{{ url_for('ver_calificaciones_estudiante', id=estudiante.id) }}" class="btn btn-sm btn-info btn-margin">Ver notas</a>
+                            <a href="{{ url_for('editar_estudiante', id=estudiante.id) }}" class="btn btn-sm btn-primary btn-margin">Editar</a>
+                            <a href="{{ url_for('eliminar_estudiante', id=estudiante.id) }}" class="btn btn-sm btn-danger btn-delete">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">
+                No hay estudiantes registrados. <a href="{{ url_for('nuevo_estudiante') }}">Agregar un estudiante</a>.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

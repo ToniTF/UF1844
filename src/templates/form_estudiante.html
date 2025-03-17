@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if estudiante %}Editar{% else %}Nuevo{% endif %} Estudiante{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>{% if estudiante %}Editar{% else %}Registrar{% endif %} Estudiante</h2>
+    </div>
+    <div class="card-body">
+        <form method="POST" class="needs-validation" novalidate>
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" 
+                       value="{{ estudiante.nombre if estudiante else '' }}" required>
+                <div class="invalid-feedback">
+                    Por favor ingrese el nombre.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="apellidos">Apellidos:</label>
+                <input type="text" class="form-control" id="apellidos" name="apellidos"
+                       value="{{ estudiante.apellidos if estudiante else '' }}" required>
+                <div class="invalid-feedback">
+                    Por favor ingrese los apellidos.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email"
+                       value="{{ estudiante.email if estudiante else '' }}" required>
+                <div class="invalid-feedback">
+                    Por favor ingrese un email válido.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <a href="{{ url_for('listar_estudiantes') }}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
